@@ -1,0 +1,47 @@
+{
+    "manifest_version": 3,
+    "name": "Media Timestamp Bookmarker",
+    "version": "1.0.0",
+    "description": "Bookmark timestamps from YouTube videos and Spotify playlists with personal notes",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "tabs"
+    ],
+    "host_permissions": [
+        "*://www.youtube.com/*",
+        "*://open.spotify.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://www.youtube.com/*"
+            ],
+            "js": [
+                "youtube-content.js"
+            ],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": [
+                "*://open.spotify.com/*"
+            ],
+            "js": [
+                "spotify-content.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Media Bookmarker"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    }
+}

@@ -1,0 +1,250 @@
+// === popup.html ===
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 400px;
+            min-height: 500px;
+            margin: 0;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .status.connected {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #15803d;
+        }
+
+        .status.disconnected {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .current-media {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .media-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .media-time {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .bookmark-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .bookmark-btn:hover {
+            background: #2563eb;
+        }
+
+        .bookmark-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .note-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin: 8px 0;
+            resize: vertical;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-save {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-cancel {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .bookmarks-section {
+            margin-top: 20px;
+        }
+
+        .bookmarks-header {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .bookmark-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .bookmark-title {
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 13px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bookmark-time {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        .bookmark-note {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .bookmark-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        .btn-delete {
+            color: #ef4444;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .youtube-icon {
+            color: #ff0000;
+        }
+
+        .spotify-icon {
+            color: #1db954;
+        }
+
+        .no-bookmarks {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            padding: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #64748b;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🔖 Media Bookmarker</h1>
+    </div>
+
+    <div id="status" class="status disconnected">
+        Checking for active media...
+    </div>
+
+    <div id="currentMedia" style="display: none;">
+        <!-- Current media info will be populated here -->
+    </div>
+
+    <div id="captureForm" style="display: none;">
+        <textarea id="noteInput" class="note-input" placeholder="Add a note for this timestamp..." rows="3"></textarea>
+        <div class="action-buttons">
+            <button id="saveBtn" class="btn-save">Save Bookmark</button>
+            <button id="cancelBtn" class="btn-cancel">Cancel</button>
+        </div>
+    </div>
+
+    <div class="bookmarks-section">
+        <div class="bookmarks-header">Recent Bookmarks</div>
+        <div id="bookmarksList" class="loading">Loading bookmarks...</div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
